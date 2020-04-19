@@ -4,7 +4,10 @@
   "description": "A script for pairing a genio device with the TUYA cloud service managed by RedGrid",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:windows": "nexe index.js -t windows-x64 -o rgridpair.exe",
+    "build:linux": "nexe index.js -t linux-x64 -o rgridpair-linux",
+    "build:macos": "nexe index.js -t mac-x64 -o rgridpair-macos",
+    "build:all": "npm run build:windows && npm run build:linux && npm run build:macos"
   },
   "author": "",
   "license": "MIT",
@@ -13,5 +16,8 @@
     "dotenv": "^8.2.0",
     "ora": "^4.0.3",
     "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "nexe": "^3.3.2"
   }
 }
