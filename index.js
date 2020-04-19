@@ -1,4 +1,7 @@
-require('dotenv').config()
+const API_KEY = '5wp8nswxayvcr3xd988g'
+const API_SECRET = 'rfhsfmq5qgymfgt3sutvrvtjpa9ghsuy'
+const SCHEMA = 'redgrid'
+
 const TuyaLink = require('@tuyapi/link').wizard
 const ora = require('ora')
 const argv = require('yargs')
@@ -11,11 +14,11 @@ const argv = require('yargs')
     .argv;
 
 const link = new TuyaLink({
-  apiKey: process.env.API_KEY,
-  apiSecret: process.env.API_SECRET,
+  apiKey: API_KEY,
+  apiSecret: API_SECRET,
   email: 'johndoe@example.com',
   password: 'examplepassword',
-  schema: process.env.SCHEMA
+  schema: SCHEMA
 })
 
 link.init()
