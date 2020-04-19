@@ -1,3 +1,4 @@
+require('dotenv').config()
 const TuyaLink = require('@tuyapi/link').wizard
 const ora = require('ora')
 const argv = require('yargs')
@@ -10,11 +11,11 @@ const argv = require('yargs')
     .argv;
 
 const link = new TuyaLink({
-  apiKey: '5wp8nswxayvcr3xd988g',
-  apiSecret: 'rfhsfmq5qgymfgt3sutvrvtjpa9ghsuy',
+  apiKey: process.env.API_KEY,
+  apiSecret: process.env.API_SECRET,
   email: 'johndoe@example.com',
   password: 'examplepassword',
-  schema: 'redgrid'
+  schema: process.env.SCHEMA
 })
 
 link.init()
@@ -31,4 +32,3 @@ link.init()
   .catch(e => {
     console.log('Unable to connect to TUYA cloud', e)
   })
-
