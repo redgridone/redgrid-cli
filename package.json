@@ -1,6 +1,6 @@
 {
   "name": "redgrid-pair-device",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A script for pairing a genio device with the TUYA cloud service managed by RedGrid",
   "main": "index.js",
   "scripts": {
