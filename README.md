@@ -1,18 +1,23 @@
 # Redgrid Pair Device
 
-Using this script it is easy for anyone to pair a Genio device without having to use the phone app.
+Using this CLI it is easy for anyone to pair a Genio device without having to use the phone app.
 
 ```
-Pair a Genio device with the RedGrid TUYA cloud: index.js --ssid [string]
---password [string]
+Manage devices in the RegGrid TUYA cloud
+
+Commands:
+  rgridpair link - Link a Genio device with the RedGrid managed TUYA cloud
+                                                                      [default]
+  rgridpair list - List the linked devices
 
 Options:
-  --version   Show version number                                      [boolean]
+  --version   Show version number                                     [boolean]
+  -h, --help  Show help                                               [boolean]
   --ssid      The WiFi access point name (SSID) that the Genio device should
               connect to. This must be a 2.4GHz WiFi network (5GHz not
-              supported)                                              [required]
-  --password  The password for the WiFi access point.                 [required]
-  -h, --help  Show help                                                [boolean]
+              supported)                                             [required]
+  --password  The password for the WiFi access point.                [required]
+                                           [boolean]
 
 ```
 
