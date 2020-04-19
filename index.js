@@ -1,37 +1,72 @@
-const API_KEY = '5wp8nswxayvcr3xd988g'
-const API_SECRET = 'rfhsfmq5qgymfgt3sutvrvtjpa9ghsuy'
-const SCHEMA = 'redgrid'
-
+const OpenAPI = require('@tuyapi/openapi')
 const TuyaLink = require('@tuyapi/link').wizard
 const ora = require('ora')
+
+const ApiConfig = {
+  key: '5wp8nswxayvcr3xd988g',
+  secret: 'rfhsfmq5qgymfgt3sutvrvtjpa9ghsuy',
+  schema: 'redgrid'
+}
+
 const argv = require('yargs')
-    .usage('Pair a Genio device with the RedGrid TUYA cloud: $0 --ssid [string] --password [string]')
-    .demandOption(['ssid','password'])
-    .describe('ssid', 'The WiFi access point name (SSID) that the Genio device should connect to. This must be a 2.4GHz WiFi network (5GHz not supported)')
-    .describe('password', 'The password for the WiFi access point.')
+    .command({
+      command: 'link',
+      aliases: ['$0'],
+      desc: 'Link a Genio device with the RedGrid managed TUYA cloud',
+      builder: (yargs) => {
+        yargs
+          .describe('ssid', 'The WiFi access point name (SSID) that the Genio device should connect to. This must be a 2.4GHz WiFi network (5GHz not supported)')
+          .describe('password', 'The password for the WiFi access point.')
+          .demandOption(['ssid','password'])
+      },
+      handler: link
+    })
+    .command({
+      command: 'list',
+      desc: 'List the linked devices',
+      builder: (yargs) => {},
+      handler: list
+    })
     .help('h')
     .alias('h', 'help')
     .argv;
 
-const link = new TuyaLink({
-  apiKey: API_KEY,
-  apiSecret: API_SECRET,
-  email: 'johndoe@example.com',
-  password: 'examplepassword',
-  schema: SCHEMA
-})
 
-link.init()
-  .then(async () => {
-    const spinner = ora('Connected to TUYA cloud. Searching for device to pair...').start()
-    try {
-      let devices = await link.linkDevice({ssid: argv.ssid, wifiPassword: argv.password})
-      spinner.succeed('Device registered!');
-      console.log(devices);
-    } catch (e) {
-      spinner.fail('Unable to pair device')
-    }
+async function link(argv) {
+  const linker = new TuyaLink({
+    apiKey: ApiConfig.key,
+    apiSecret: ApiConfig.secret,
+    email: 'johndoe@example.com',
+    password: 'examplepassword',
+    schema: ApiConfig.schema
   })
-  .catch(e => {
-    console.log('Unable to connect to TUYA cloud', e)
-  })
+  linker.init()
+    .then(async () => {
+      const spinner = ora('Connected to TUYA cloud. Searching for device to pair...').start()
+      try {
+        let devices = await linker.linkDevice({ssid: argv.ssid, wifiPassword: argv.password})
+        spinner.succeed('Device registered!');
+        console.log(devices);
+      } catch (e) {
+        spinner.fail('Unable to pair device')
+      }
+
+      console.log('All registered devices:')
+      
+
+    })
+    .catch(e => {
+      console.log('Unable to connect to TUYA cloud', e)
+    })  
+}
+
+async function list(argv) {
+  try {
+    const api = new OpenAPI(ApiConfig)
+    await api.getToken()
+    const result = await api.getDevices()
+    console.log(result)
+  } catch (e) {
+    console.log('Error reaching TUYA cloud', e)
+  }
+}

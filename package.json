@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@tuyapi/link": "^0.3.2",
+    "@tuyapi/openapi": "^1.0.0",
     "ora": "^4.0.3",
     "yargs": "^15.3.1"
   },
