@@ -1,17 +1,18 @@
 {
-  "name": "redgrid-pair-device",
+  "name": "redgrid-cli",
   "version": "1.2.0",
-  "description": "A script for pairing a genio device with the TUYA cloud service managed by RedGrid",
+  "description": "A script for pairing and controlling genio device with the TUYA cloud service managed by RedGrid",
   "main": "index.js",
   "scripts": {
-    "build:windows": "nexe index.js -t windows-x64 -o rgridpair.exe",
-    "build:linux": "nexe index.js -t linux-x64 -o rgridpair-linux",
-    "build:macos": "nexe index.js -t mac-x64 -o rgridpair-macos",
+    "build:windows": "nexe index.js -t windows-x64 -o redgrid.exe",
+    "build:linux": "nexe index.js -t linux-x64 -o redgrid-linux",
+    "build:macos": "nexe index.js -t mac-x64 -o redgrid-macos",
     "build:all": "npm run build:windows && npm run build:linux && npm run build:macos"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@redgrid/tuya-ac-api": "^0.1.0",
     "@tuyapi/link": "^0.3.2",
     "@tuyapi/openapi": "^1.0.0",
     "ora": "^4.0.3",
