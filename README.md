@@ -1,23 +1,20 @@
-# Redgrid Pair Device
+# Redgrid CLI
 
-Using this CLI it is easy for anyone to pair a Genio device without having to use the phone app.
+This CLI allows performing tasks such as pairing a tuya device, sending commands, adding infrared virtual devices and sending infrared commands
 
 ```
-Manage devices in the RegGrid TUYA cloud
+redgrid [command]
 
 Commands:
-  rgridpair link - Link a Genio device with the RedGrid managed TUYA cloud
-                                                                      [default]
-  rgridpair list - List the linked devices
+  redgrid link       Link a Genio device with the RedGrid managed TUYA cloud
+  redgrid list       List the linked devices
+  redgrid functions  Request a device for the list of commands/functions it
+                      supports
+  redgrid command    Send a command object to a TUYA device
 
 Options:
-  --version   Show version number                                     [boolean]
-  -h, --help  Show help                                               [boolean]
-  --ssid      The WiFi access point name (SSID) that the Genio device should
-              connect to. This must be a 2.4GHz WiFi network (5GHz not
-              supported)                                             [required]
-  --password  The password for the WiFi access point.                [required]
-                                           [boolean]
+  --version   Show version number                                      [boolean]
+  -h, --help  Show help                                                [boolean]
 
 ```
 
@@ -30,8 +27,8 @@ If you want to simply run the script with minimal effort download the prebuilt v
 If you want to make some changes (or just don't want to install the 30MB binaries) you can get it up and running with the following
 
 ```bash
-git clone https://github.com/redgridone/redgrid-pair-device
-cd regrid-pair-device
+git clone https://github.com/redgridone/redgrid-cli
+cd regrid-cli
 npm install
 node index.js --help
 ```

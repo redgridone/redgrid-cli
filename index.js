@@ -13,7 +13,6 @@ const ApiConfig = {
 const argv = require('yargs')
     .command({
       command: 'link',
-      aliases: ['$0'],
       desc: 'Link a Genio device with the RedGrid managed TUYA cloud',
       builder: (yargs) => {
         yargs
