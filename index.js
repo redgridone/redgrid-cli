@@ -116,6 +116,17 @@ async function link(argv) {
     })  
 }
 
+async function makeTuyaControlApiCall (apiHandler) {
+  try {
+    const api = new ControlApi(ApiConfig)
+    await api.getToken()
+    const result = await apiHandler(api)
+    console.log(result)
+  } catch (e) {
+    console.log('Error reaching TUYA cloud', e)
+  }  
+}
+
 async function list (argv) {
   try {
     const api = new OpenAPI(ApiConfig)
@@ -128,26 +139,16 @@ async function list (argv) {
 }
 
 async function functions (argv) {
-  try {
-    const api = new ControlApi(ApiConfig)
-    await api.getToken()
-    const result = await api.functions(argv.deviceId)
-    console.log(result)
-  } catch (e) {
-    console.log('Error reaching TUYA cloud', e)
-  }
+  makeTuyaControlApiCall(async api => {
+    return api.functions(argv.deviceId)
+  })
 }
 
 async function command (argv) {
   const command = JSON.parse(argv.command)
-  try {
-    const api = new ControlApi(ApiConfig)
-    await api.getToken()
-    const result = await api.sendCommands(argv.deviceId, [command])
-    console.log(result)
-  } catch (e) {
-    console.log('Error reaching TUYA cloud', e)
-  }  
+  makeTuyaControlApiCall(async api => {
+    return api.sendCommands(argv.deviceId, [command])
+  })
 }
 
 async function listRemoteIndices (argv) {
@@ -156,35 +157,20 @@ async function listRemoteIndices (argv) {
     console.log(`${argv.brand} is an unsupported brand. Must be one of ${acBrands.map(x => x.brand_name)}`)
     return
   }
-  try {
-    const api = new ControlApi(ApiConfig)
-    await api.getToken()
-    const result = await api.getSupportedRemotes(argv.deviceId, brand.brand_id)
-    console.log(result)
-  } catch (e) {
-    console.log('Error reaching TUYA cloud', e)
-  }      
+  makeTuyaControlApiCall(async api => {
+    return api.getSupportedRemotes(argv.deviceId, brand.brand_id)
+  })
 }
 
 async function addRemote (argv) {
-  try {
-    const api = new ControlApi(ApiConfig)
-    await api.getToken()
-    const result = await api.addRemote(argv.deviceId, argv.remoteIndex)
-    console.log(result)
-  } catch (e) {
-    console.log('Error reaching TUYA cloud', e)
-  }    
+  makeTuyaControlApiCall(async api => {
+    return api.addRemote(argv.deviceId, argv.remoteIndex)
+  })   
 }
 
 async function commandAc (argv) {
   const command = JSON.parse(argv.command)
-  try {
-    const api = new ControlApi(ApiConfig)
-    await api.getToken()
-    const result = await api.sendKeys(argv.deviceId, argv.remoteId, argv.remoteIndex, command)
-    console.log(result)
-  } catch (e) {
-    console.log('Error reaching TUYA cloud', e)
-  }    
+  makeTuyaControlApiCall(async api => {
+    return api.sendKeys(argv.deviceId, argv.remoteId, argv.remoteIndex, command)
+  })    
 }
