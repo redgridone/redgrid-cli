@@ -3,6 +3,8 @@ const ControlApi = require('@redgrid/tuya-ac-api')
 const TuyaLink = require('@tuyapi/link').wizard
 const ora = require('ora')
 
+const acBrands = require('./tuya-brands')
+
 // these can't really live here this is insecure AF
 const ApiConfig = {
   key: '5wp8nswxayvcr3xd988g',
@@ -61,6 +63,17 @@ const argv = require('yargs')
       handler: addRemote
     })
     .command({
+      command: 'ac-remotes',
+      desc: 'Return the list of supported AC remotes for a particular IR blaster and brand of AC',
+      builder: (yargs) => {
+        yargs
+          .describe('deviceId', 'The device ID of the genio device. Use regrid list to list all devices')
+          .describe('brand', `A supported brand. Must be one of ${acBrands.map(x => x.brand_name)}`)
+          .demandOption(['deviceId', 'brand'])
+      },
+      handler: listRemoteIndices
+    })
+    .command({
       command: 'command-ac',
       desc: 'Send an infrared control command to an aircon device',
       builder: (yargs) => {
@@ -69,7 +82,7 @@ const argv = require('yargs')
           .describe('remoteId', 'The ID of the virtual remote added to the IR device')
           .describe('remoteIndex', 'The TUYA remote index. This is a layout for a particular brand and model')
           .describe('command', `Stringified JSON object of IR command to send. \n has fields for power (0: off, 1: on), mode, (0: cooling, 1: heating, 2: automatic, 3: air supply, 4: dehumidification), temp (between 16 and 31) and wind (between 0 and 3). \n e.g '{"power": 1, "mode": 1}'`)
-          .demandOption(['deviceId', 'remoteIndex'])
+          .demandOption(['deviceId', 'remoteId', 'remoteIndex', 'command'])
       },
       handler: commandAc     
     })
@@ -137,6 +150,22 @@ async function command (argv) {
   }  
 }
 
+async function listRemoteIndices (argv) {
+  const brand = acBrands.find(x => x.brand_name === argv.brand)
+  if (brand === undefined) {
+    console.log(`${argv.brand} is an unsupported brand. Must be one of ${acBrands.map(x => x.brand_name)}`)
+    return
+  }
+  try {
+    const api = new ControlApi(ApiConfig)
+    await api.getToken()
+    const result = await api.getSupportedRemotes(argv.deviceId, brand.brand_id)
+    console.log(result)
+  } catch (e) {
+    console.log('Error reaching TUYA cloud', e)
+  }      
+}
+
 async function addRemote (argv) {
   try {
     const api = new ControlApi(ApiConfig)
@@ -153,7 +182,7 @@ async function commandAc (argv) {
   try {
     const api = new ControlApi(ApiConfig)
     await api.getToken()
-    const result = await api.sendKeys(argv.deviceId, argv.remoteId, argv.remoteIndex, argv.command)
+    const result = await api.sendKeys(argv.deviceId, argv.remoteId, argv.remoteIndex, command)
     console.log(result)
   } catch (e) {
     console.log('Error reaching TUYA cloud', e)
