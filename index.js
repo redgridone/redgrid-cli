@@ -49,6 +49,30 @@ const argv = require('yargs')
       },
       handler: command
     })
+    .command({
+      command: 'add-remote',
+      desc: 'Add a virtual remote device to a paired device',
+      builder: (yargs) => {
+        yargs
+          .describe('deviceId', 'The device ID of the genio device. Use regrid list to list all devices')
+          .describe('remoteIndex', 'The TUYA remote index. This is a layout for a particular brand and model')
+          .demandOption(['deviceId', 'remoteIndex'])
+      },
+      handler: addRemote
+    })
+    .command({
+      command: 'command-ac',
+      desc: 'Send an infrared control command to an aircon device',
+      builder: (yargs) => {
+        yargs
+          .describe('deviceId', 'The ID of the physical IR blaster device')
+          .describe('remoteId', 'The ID of the virtual remote added to the IR device')
+          .describe('remoteIndex', 'The TUYA remote index. This is a layout for a particular brand and model')
+          .describe('command', `Stringified JSON object of IR command to send. \n has fields for power (0: off, 1: on), mode, (0: cooling, 1: heating, 2: automatic, 3: air supply, 4: dehumidification), temp (between 16 and 31) and wind (between 0 and 3). \n e.g '{"power": 1, "mode": 1}'`)
+          .demandOption(['deviceId', 'remoteIndex'])
+      },
+      handler: commandAc     
+    })
     .help('h')
     .alias('h', 'help')
     .argv;
@@ -72,17 +96,14 @@ async function link(argv) {
       } catch (e) {
         spinner.fail('Unable to pair device')
       }
-
-      console.log('All registered devices:')
-      
-
+      console.log('All registered devices:')     
     })
     .catch(e => {
       console.log('Unable to connect to TUYA cloud', e)
     })  
 }
 
-async function list(argv) {
+async function list (argv) {
   try {
     const api = new OpenAPI(ApiConfig)
     await api.getToken()
@@ -93,7 +114,7 @@ async function list(argv) {
   }
 }
 
-async function functions(argv) {
+async function functions (argv) {
   try {
     const api = new ControlApi(ApiConfig)
     await api.getToken()
@@ -104,7 +125,7 @@ async function functions(argv) {
   }
 }
 
-async function command(argv) {
+async function command (argv) {
   const command = JSON.parse(argv.command)
   try {
     const api = new ControlApi(ApiConfig)
@@ -114,4 +135,27 @@ async function command(argv) {
   } catch (e) {
     console.log('Error reaching TUYA cloud', e)
   }  
+}
+
+async function addRemote (argv) {
+  try {
+    const api = new ControlApi(ApiConfig)
+    await api.getToken()
+    const result = await api.addRemote(argv.deviceId, argv.remoteIndex)
+    console.log(result)
+  } catch (e) {
+    console.log('Error reaching TUYA cloud', e)
+  }    
+}
+
+async function commandAc (argv) {
+  const command = JSON.parse(argv.command)
+  try {
+    const api = new ControlApi(ApiConfig)
+    await api.getToken()
+    const result = await api.sendKeys(argv.deviceId, argv.remoteId, argv.remoteIndex, argv.command)
+    console.log(result)
+  } catch (e) {
+    console.log('Error reaching TUYA cloud', e)
+  }    
 }
