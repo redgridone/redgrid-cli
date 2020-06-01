@@ -99,11 +99,14 @@ async function link(argv) {
     password: 'examplepassword',
     schema: ApiConfig.schema
   })
+  const stringifyIfNotString = x => typeof x === 'string' ? x : JSON.stringify(x)
+  const ssid = stringifyIfNotString(argv.ssid)
+  const wifiPassword = stringifyIfNotString(argv.password)
   linker.init()
     .then(async () => {
       const spinner = ora('Connected to TUYA cloud. Searching for device to pair...').start()
       try {
-        let devices = await linker.linkDevice({ssid: argv.ssid, wifiPassword: argv.password})
+        let devices = await linker.linkDevice({ ssid, wifiPassword })
         spinner.succeed('Device registered!');
         console.log(devices);
       } catch (e) {
